@@ -11,6 +11,11 @@ updates:
         patterns: ["astro", "@astrojs/*"]
       lint:
         patterns: ["stylelint*", "eslint*", "postcss-html"]
+    ignore:
+      # TypeScript major bumps break @typescript-eslint/parser's peer range
+      # (requires typescript <6.0.0). Re-allow once the parser supports TS 6.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: "/"
