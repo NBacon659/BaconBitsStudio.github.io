@@ -1,0 +1,35 @@
+{
+  "name": "baconbitsstudio-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint:css": "stylelint \"src/**/*.{css,astro}\"",
+    "lint:js": "eslint .",
+    "lint:inline": "node scripts/check-no-inline.mjs",
+    "lint": "npm run lint:inline && npm run lint:css && npm run lint:js",
+    "check": "astro check",
+    "verify": "npm run lint && npm run check && npm run build"
+  },
+  "dependencies": {
+    "astro": "5.13.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.4",
+    "@typescript-eslint/parser": "8.44.0",
+    "eslint": "9.36.0",
+    "eslint-plugin-astro": "1.3.1",
+    "postcss-html": "1.8.0",
+    "stylelint": "16.24.0",
+    "stylelint-config-standard": "39.0.1",
+    "stylelint-declaration-strict-value": "1.10.11",
+    "typescript": "5.9.2"
+  }
+}

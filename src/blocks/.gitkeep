@@ -1,0 +1,3 @@
+# Structural placeholder per §13(A). blocks/registry.ts (blockType -> component,
+# the open/closed seam) is built in Sprint 5 — deliberately NOT created now to
+# avoid pulling later-sprint work forward.

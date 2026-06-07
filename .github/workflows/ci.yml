@@ -1,0 +1,36 @@
+name: CI
+
+# Verification gate that does NOT deploy: runs on pull requests and on demand.
+# Lets you confirm "CI green on an empty commit" (Sprint 1 DoD) without shipping.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install (locked)
+        run: npm ci
+
+      - name: Lint (no magic numbers, no inline)
+        run: npm run lint
+
+      - name: Type/content check
+        run: npm run check
+
+      - name: Build static site
+        run: npm run build

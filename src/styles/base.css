@@ -1,0 +1,137 @@
+/* =============================================================================
+   base.css — global reset + element defaults. Token-only (§5.1): no raw
+   px / rem / hex / ms literals here; everything resolves to tokens.css.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  color: var(--text-default);
+  background-color: var(--surface-base);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-family-display);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--text-strong);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--font-size-3xl);
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+}
+
+h3 {
+  font-size: var(--font-size-lg);
+}
+
+p {
+  max-width: var(--measure-prose);
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: var(--space-3xs);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+code,
+pre {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Visible, token-driven focus state for keyboard users (§11 a11y). */
+:focus-visible {
+  outline: var(--space-3xs) solid var(--focus-ring-color);
+  outline-offset: var(--space-3xs);
+  border-radius: var(--radius-sm);
+}
+
+/* Respect reduced-motion globally (§10, §11). */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    /* Structurally-required near-zero override for the reduced-motion reset;
+       a token here would defeat the purpose. Documented exception per §5. */
+    /* stylelint-disable-next-line scale-unlimited/declaration-strict-value */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    /* stylelint-disable-next-line scale-unlimited/declaration-strict-value */
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Accessible skip-link + visually-hidden utility (§11). */
+.skip-link {
+  position: absolute;
+  z-index: var(--z-toast);
+  inset-block-start: var(--space-2xs);
+  inset-inline-start: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-sm);
+  color: var(--text-on-accent);
+  background-color: var(--accent);
+  border-radius: var(--radius-sm);
+  transform: translateY(-200%);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

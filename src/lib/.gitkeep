@@ -1,0 +1,2 @@
+# Structural placeholder per design-doc §13(A). Populated in later sprints:
+# lib/ -> build-time CMS client (S4); components/ -> UI (S2); scripts/ -> behavior islands (S2).

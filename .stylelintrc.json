@@ -1,0 +1,65 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "plugins": ["stylelint-declaration-strict-value"],
+  "overrides": [
+    {
+      "files": ["**/*.astro"],
+      "customSyntax": "postcss-html"
+    }
+  ],
+  "rules": {
+    "custom-property-empty-line-before": null,
+    "declaration-empty-line-before": null,
+    "comment-empty-line-before": null,
+    "no-descending-specificity": null,
+    "selector-class-pattern": [
+      "^[a-z]([a-z0-9-]+)?(__([a-z0-9]+-?)+)?(--([a-z0-9]+-?)+)?$",
+      { "message": "Use lowercase BEM-style class names (block__element--modifier)." }
+    ],
+    "scale-unlimited/declaration-strict-value": [
+      [
+        "/color$/",
+        "fill",
+        "stroke",
+        "background-color",
+        "font-size",
+        "font-family",
+        "font-weight",
+        "line-height",
+        "z-index",
+        "box-shadow",
+        "border-radius",
+        "transition-duration",
+        "animation-duration",
+        "gap",
+        "row-gap",
+        "column-gap",
+        "padding",
+        "padding-block",
+        "padding-inline",
+        "padding-top",
+        "padding-right",
+        "padding-bottom",
+        "padding-left",
+        "margin",
+        "margin-block",
+        "margin-inline"
+      ],
+      {
+        "ignoreValues": [
+          "/^0$/",
+          "auto",
+          "inherit",
+          "initial",
+          "unset",
+          "transparent",
+          "currentColor",
+          "none"
+        ],
+        "disableFix": true,
+        "message": "No magic numbers (§5.1): use a var(--token) from tokens.css for \"%p\"."
+      }
+    ]
+  },
+  "ignoreFiles": ["dist/**/*", "src/styles/tokens.css"]
+}

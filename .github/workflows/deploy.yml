@@ -1,0 +1,71 @@
+name: Build & Deploy to GitHub Pages
+
+# Triggers (§12): every push to main, and repository_dispatch fired later by the
+# CMS publish webhook (wired in Sprint 4). Manual run available for validation.
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [cms-publish]
+  workflow_dispatch:
+
+# Least-privilege GITHUB_TOKEN (§14d): only what Pages deploy needs.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One in-flight deploy at a time; don't cancel a running production deploy.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  # Deploy config as values, never inlined in code (§5.1). Update SITE_URL to the
+  # custom domain in Sprint 3; set SITE_BASE to "/<repo>/" only for a project repo.
+  SITE_URL: https://nbacon659.github.io
+  SITE_BASE: /
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install (locked)
+        run: npm ci
+
+      - name: Lint (no magic numbers, no inline)
+        run: npm run lint
+
+      - name: Type/content check
+        run: npm run check
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

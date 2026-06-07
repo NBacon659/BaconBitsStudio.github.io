@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # Supply-chain hygiene (§14d): keep deps + pinned actions current.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      astro:
+        patterns: ["astro", "@astrojs/*"]
+      lint:
+        patterns: ["stylelint*", "eslint*", "postcss-html"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
