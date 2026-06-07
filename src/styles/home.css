@@ -25,6 +25,11 @@
   align-items: flex-start;
 }
 
+.hero__logo {
+  inline-size: var(--size-logo);
+  block-size: auto;
+}
+
 .hero__eyebrow {
   display: inline-block;
   padding: var(--space-3xs) var(--space-xs);

@@ -2,7 +2,9 @@
 // Placeholder Home (§ Sprint 1). Intentionally thin — real pages, the design
 // system, and showpiece styling arrive in Sprints 2 and 7. The point of this
 // page is only to prove the walking skeleton deploys and is token-styled.
+import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import logo from "../assets/baconbitsstudio.png";
 import "../styles/home.css";
 
 const title = "Bacon Bits Studio — Portfolio";
@@ -13,6 +15,7 @@ const description =
 <BaseLayout title={title} description={description}>
   <main class="site-main" id="main">
     <section class="hero">
+      <Image class="hero__logo" src={logo} alt="Bacon Bits Studio logo" loading="eager" />
       <span class="hero__eyebrow">Walking skeleton · live on day one</span>
       <h1 class="hero__title">Bacon Bits Studio</h1>
       <p class="hero__lede">

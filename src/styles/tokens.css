@@ -115,6 +115,7 @@
   --measure-prose: 68ch;
   --layout-max: clamp(20rem, 92vw, 75rem);
   --layout-gutter: clamp(var(--space-sm), 4vw, var(--space-xl));
+  --size-logo: clamp(7rem, 22vw, 11rem);
 }
 
 /* --- Dark theme: swap surface/ink, keep teal/pink accents (§10) ---------- */
