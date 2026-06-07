@@ -13,6 +13,7 @@
      field, warm pink, near-black ink, off-white surface (§10). ------------- */
   --color-teal-500: #17a2a2;
   --color-teal-600: #128585;
+  --color-teal-700: #0d7a7a;
   --color-teal-300: #5fd0d0;
   --color-sky-500: #38b6ff;
   --color-sky-300: #8fd6ff;
@@ -44,6 +45,9 @@
   --text-on-accent: var(--color-paper-0);
   --accent: var(--brand-teal);
   --accent-hover: var(--color-teal-600);
+  /* AA-contrast teal for surfaces carrying white text (≥4.5:1 on white text):
+     used by pills/badges/CTA buttons so "text-on-accent" passes WCAG AA. */
+  --accent-strong: var(--color-teal-700);
   --accent-secondary: var(--brand-pink);
   --focus-ring-color: var(--brand-sky);
 

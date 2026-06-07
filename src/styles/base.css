@@ -117,7 +117,7 @@ svg {
   inset-inline-start: var(--space-2xs);
   padding: var(--space-2xs) var(--space-sm);
   color: var(--text-on-accent);
-  background-color: var(--accent);
+  background-color: var(--accent-strong);
   border-radius: var(--radius-sm);
   transform: translateY(-200%);
   transition: transform var(--duration-fast) var(--ease-standard);
