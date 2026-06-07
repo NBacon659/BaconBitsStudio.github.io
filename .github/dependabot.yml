@@ -12,9 +12,11 @@ updates:
       lint:
         patterns: ["stylelint*", "eslint*", "postcss-html"]
     ignore:
-      # TypeScript major bumps break @typescript-eslint/parser's peer range
-      # (requires typescript <6.0.0). Re-allow once the parser supports TS 6.
-      - dependency-name: "typescript"
+      # Major upgrades arrive ahead of the plugin/peer ecosystem and break the
+      # strict `npm ci` CI step (e.g. astro 6, eslint 10, stylelint 17,
+      # typescript 6 all fail today). Keep patch/minor (security) auto-PRs;
+      # take majors deliberately as a tested upgrade task, not via auto-PR.
+      - dependency-name: "*"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
