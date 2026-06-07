@@ -116,6 +116,25 @@
   --layout-max: clamp(20rem, 92vw, 75rem);
   --layout-gutter: clamp(var(--space-sm), 4vw, var(--space-xl));
   --size-logo: clamp(7rem, 22vw, 11rem);
+  --size-logo-mark: clamp(2rem, 6vw, 2.75rem); /* small header/footer mark */
+
+  /* --- Grid: intrinsic auto-fit minimum (layouts derive from data length) -- */
+  --grid-card-min: clamp(16rem, 40vw, 22rem);
+  --grid-gallery-min: clamp(8rem, 24vw, 12rem);
+  --aspect-card-media: 16 / 10;
+
+  /* --- Border weights (named, never bare px in components) ---------------- */
+  --border-hairline: 1px;
+  --border-thick: 2px;
+
+  /* --- Scrim / overlay backdrop (lightbox, modal) ------------------------ */
+  --scrim: rgb(20 24 28 / 78%);
+  --scrim-strong: rgb(13 16 20 / 92%);
+
+  /* --- Category accents (web / game / software) — semantic, tokenized ---- */
+  --category-web: var(--brand-teal);
+  --category-game: var(--brand-pink);
+  --category-software: var(--brand-sky);
 }
 
 /* --- Dark theme: swap surface/ink, keep teal/pink accents (§10) ---------- */

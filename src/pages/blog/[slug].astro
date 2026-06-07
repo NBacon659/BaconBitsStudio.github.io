@@ -1,0 +1,163 @@
+---
+// /blog/<slug> — single post (§3). Sprint 2 renders the post shell + sample
+// prose; in Sprint 5 the body becomes block-primitive composed. Related posts
+// derive from shared tags (layout derives from data — §5.1).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/Container.astro";
+import { getPosts, getPost } from "../../lib/content";
+import { withBase, absoluteUrl, site } from "../../lib/site";
+
+export function getStaticPaths() {
+  return getPosts().map((post) => ({ params: { slug: post.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = getPost(slug!);
+if (!post) return Astro.redirect(withBase("404"));
+
+const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+const related = getPosts()
+  .filter((p) => p.slug !== post.slug && p.tags.some((t) => post.tags.includes(t)))
+  .slice(0, 3);
+
+const articleLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.title,
+  description: post.excerpt,
+  url: absoluteUrl(`blog/${post.slug}`),
+  datePublished: post.date,
+  keywords: post.tags.join(", "),
+  author: { "@type": "Person", name: site.author },
+  ...(post.cover ? { image: absoluteUrl(post.cover.src) } : {}),
+};
+---
+
+<BaseLayout
+  title={post.title}
+  description={post.excerpt}
+  path={`blog/${post.slug}`}
+  image={post.cover?.src}
+  ogType="article"
+  jsonLd={[articleLd]}
+>
+  <main id="main">
+    <Container as="article" class="post">
+      <p class="post__back"><a href={withBase("blog")}>← Back to blog</a></p>
+      <p class="post__meta">
+        <time datetime={post.date}>{fmtDate(post.date)}</time> · {post.category}
+      </p>
+      <h1 class="post__title">{post.title}</h1>
+      {post.placeholder && (
+        <p class="post__flag">Placeholder post — real writing replaces this before launch.</p>
+      )}
+      {post.cover && (
+        <img class="post__cover" src={withBase(post.cover.src)} alt={post.cover.alt} width="1200" height="630" />
+      )}
+      <div class="post__body">
+        <p>{post.excerpt}</p>
+        <p>
+          This is a sample post body. Once the content pipeline (Sprint 4) and the
+          block primitive library (Sprint 5) are in place, posts are composed from
+          tokenized blocks — callouts, code with syntax highlighting, galleries,
+          embeds, and download cards — all rendered through one shared registry.
+        </p>
+      </div>
+
+      {post.tags.length > 0 && (
+        <ul class="post__tags" role="list">
+          {post.tags.map((t) => <li class="post__tag">#{t}</li>)}
+        </ul>
+      )}
+
+      {related.length > 0 && (
+        <section class="post__related">
+          <h2>Related posts</h2>
+          <ul role="list">
+            {related.map((r) => (
+              <li><a href={withBase(`blog/${r.slug}`)}>{r.title}</a></li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </Container>
+  </main>
+</BaseLayout>
+
+<style>
+  .post {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding-block: var(--space-xl);
+  }
+
+  .post__back a {
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+  }
+
+  .post__meta {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+  }
+
+  .post__flag {
+    padding: var(--space-2xs) var(--space-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-default);
+    background-color: var(--surface-sunken);
+    border-inline-start: var(--border-thick) solid var(--accent);
+    border-radius: var(--radius-sm);
+  }
+
+  .post__cover {
+    width: 100%;
+    aspect-ratio: var(--aspect-card-media);
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+
+  .post__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-block: var(--space-md);
+  }
+
+  .post__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    padding: 0;
+    list-style: none;
+  }
+
+  .post__tag {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+  }
+
+  .post__related {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-lg);
+    padding-block-start: var(--space-lg);
+    border-block-start: var(--border-hairline) solid var(--border-subtle);
+  }
+
+  .post__related ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding-inline-start: var(--space-md);
+  }
+</style>

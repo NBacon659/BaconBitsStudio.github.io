@@ -1,0 +1,51 @@
+---
+// Button.astro — link styled as an action (§5 SRP). Variants are tokenized; the
+// component never accepts a raw size/color. Default renders the brand CTA.
+interface Props {
+  href: string;
+  variant?: "primary" | "ghost";
+  class?: string;
+}
+const { href, variant = "primary", class: className = "" } = Astro.props;
+---
+
+<a href={href} class:list={["button", `button--${variant}`, className]}>
+  <slot />
+</a>
+
+<style>
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    padding: var(--space-2xs) var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    border: var(--border-thick) solid transparent;
+    border-radius: var(--radius-pill);
+    transition: background-color var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .button--primary {
+    color: var(--text-on-accent);
+    background-color: var(--accent-strong);
+  }
+
+  .button--primary:hover {
+    color: var(--text-on-accent);
+    background-color: var(--accent-hover);
+  }
+
+  .button--ghost {
+    color: var(--accent);
+    border-color: var(--border-subtle);
+  }
+
+  .button--ghost:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+</style>

@@ -1,0 +1,68 @@
+---
+// DownloadCard.astro — software download slot (§3, §8). Sprint 2 ships the slot +
+// version/note placeholder; the real versioned path, file size, and SHA-256
+// checksum row are wired in Sprint 5. Download link uses rel=noopener (§14a).
+interface Props {
+  version: string;
+  note: string;
+  href?: string;
+}
+const { version, note, href } = Astro.props;
+---
+
+<div class="download-card">
+  <div class="download-card__meta">
+    <span class="download-card__version">{version}</span>
+    <p class="download-card__note">{note}</p>
+  </div>
+  {
+    href ? (
+      <a class="download-card__button" href={href} rel="noopener noreferrer" download>
+        Download
+      </a>
+    ) : (
+      <span class="download-card__pending">Download wired in Sprint 5</span>
+    )
+  }
+</div>
+
+<style>
+  .download-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md);
+    background-color: var(--surface-raised);
+    border: var(--border-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+  }
+
+  .download-card__version {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--accent);
+  }
+
+  .download-card__note {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+  }
+
+  .download-card__button {
+    padding: var(--space-2xs) var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-on-accent);
+    text-decoration: none;
+    background-color: var(--accent-strong);
+    border-radius: var(--radius-pill);
+  }
+
+  .download-card__pending {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+  }
+</style>

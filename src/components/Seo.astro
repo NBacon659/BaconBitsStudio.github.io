@@ -1,0 +1,86 @@
+---
+// Seo.astro — all <head> metadata for one page (§11 SEO/sharing). Pure
+// presentation of values passed in or derived from site config; no literals.
+import { site, absoluteUrl } from "../lib/site";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Site-relative path of this page, e.g. "work/" — drives canonical + OG url. */
+  path: string;
+  /** Override the default social card; site-relative path under /public. */
+  image?: string;
+  /** OG type: "website" for index pages, "article" for posts/case studies. */
+  ogType?: "website" | "article";
+  /** Pre-serialized JSON-LD objects to embed (Person, CreativeWork, ...). */
+  jsonLd?: readonly unknown[];
+}
+
+const {
+  title,
+  description,
+  path,
+  image = site.ogImage.replace(/\.svg$/, ".png"),
+  ogType = "website",
+  jsonLd = [],
+} = Astro.props;
+
+const canonical = absoluteUrl(path);
+const imageUrl = absoluteUrl(image);
+const base = import.meta.env.BASE_URL;
+const asset = (file: string) => `${base}/${file}`.replace(/\/{2,}/g, "/");
+// Cloudflare Web Analytics token is a PUBLIC site token (not a secret), supplied
+// once Nick creates the CF Analytics site. Inert until provided (§11, §16-G).
+const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="generator" content={Astro.generator} />
+<meta name="theme-color" content="#17a2a2" />
+<meta name="author" content={site.author} />
+
+<!-- Icons + PWA manifest (favicon set — §10) -->
+<link rel="icon" type="image/svg+xml" href={asset("baconbitsstudio.svg")} />
+<link rel="icon" type="image/x-icon" href={asset("favicon.ico")} />
+<link rel="apple-touch-icon" href={asset("apple-touch-icon.png")} />
+<link rel="manifest" href={asset("site.webmanifest")} />
+<link rel="alternate" type="application/rss+xml" title={`${site.name} — Blog`} href={absoluteUrl("rss.xml")} />
+
+<!-- Open Graph (§11) -->
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:locale" content={site.locale} />
+
+<!-- Twitter card (§11) -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+
+<!-- JSON-LD structured data (§11). ld+json is data, not executable inline JS. -->
+{
+  jsonLd.map((node) => (
+    <script type="application/ld+json" set:html={JSON.stringify(node)} />
+  ))
+}
+
+<!-- Cloudflare Web Analytics — cookieless, no consent banner (§11, §16-G).
+     Rendered only when the public token is configured; third-party SRI is not
+     offered for this rolling-URL beacon (documented §14a exception). -->
+{
+  cfBeaconToken && (
+    <script
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={JSON.stringify({ token: cfBeaconToken })}
+    />
+  )
+}

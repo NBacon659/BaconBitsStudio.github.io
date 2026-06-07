@@ -1,0 +1,265 @@
+---
+// /work/<slug> — case study (§3). Category-aware treatment: web → live link +
+// screenshot gallery (lightbox); game → sandboxed embed; software → download
+// card. Static paths come from the typed content interface (Sprint 4 swaps the
+// data source, not this template — §5 DIP).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/Container.astro";
+import EmbedFrame from "../../components/EmbedFrame.astro";
+import DownloadCard from "../../components/DownloadCard.astro";
+import { getProjects, getProject, CATEGORY_LABELS } from "../../lib/content";
+import { withBase, absoluteUrl } from "../../lib/site";
+
+export function getStaticPaths() {
+  return getProjects().map((project) => ({ params: { slug: project.slug } }));
+}
+
+const { slug } = Astro.params;
+const project = getProject(slug!);
+if (!project) return Astro.redirect(withBase("404"));
+
+const base = import.meta.env.BASE_URL;
+const mediaSrc = (src: string) => `${base}/${src}`.replace(/\/{2,}/g, "/");
+const cover = project.media[0];
+
+const creativeWorkLd = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  name: project.title,
+  abstract: project.summary,
+  url: absoluteUrl(`work/${project.slug}`),
+  dateCreated: project.date,
+  genre: CATEGORY_LABELS[project.category],
+  keywords: project.tech.join(", "),
+  ...(cover ? { image: absoluteUrl(cover.src) } : {}),
+};
+---
+
+<BaseLayout
+  title={project.title}
+  description={project.summary}
+  path={`work/${project.slug}`}
+  image={cover?.src}
+  ogType="article"
+  jsonLd={[creativeWorkLd]}
+>
+  <main id="main">
+    <Container as="article" class="case">
+      <p class="case__back"><a href={withBase("work")}>← Back to work</a></p>
+      <span class="case__badge" data-category={project.category}>
+        {CATEGORY_LABELS[project.category]}
+      </span>
+      <h1 class="case__title">{project.title}</h1>
+      {project.placeholder && (
+        <p class="case__flag">Placeholder case study — real project content lands before launch (decision J).</p>
+      )}
+      <p class="case__summary">{project.summary}</p>
+
+      <dl class="case__meta">
+        <div><dt>Status</dt><dd>{project.status}</dd></div>
+        {project.roles.length > 0 && (
+          <div><dt>Roles</dt><dd>{project.roles.join(", ")}</dd></div>
+        )}
+        {project.tech.length > 0 && (
+          <div><dt>Stack</dt><dd>{project.tech.join(", ")}</dd></div>
+        )}
+      </dl>
+
+      {project.links.length > 0 && (
+        <ul class="case__links" role="list">
+          {project.links.map((link) => (
+            <li>
+              <a href={link.href} rel="noopener noreferrer" target="_blank">{link.label} ↗</a>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Category-aware treatment (§3) */}
+      {
+        project.category === "game" && (
+          <section class="case__section">
+            <h2>Play it</h2>
+            <EmbedFrame
+              src={project.embed}
+              title={`${project.title} embedded build`}
+              fallbackHref={project.links[0]?.href}
+            />
+          </section>
+        )
+      }
+      {
+        project.category === "software" && project.download && (
+          <section class="case__section">
+            <h2>Download</h2>
+            <DownloadCard version={project.download.version} note={project.download.note} />
+          </section>
+        )
+      }
+      {
+        project.category === "web" && project.media.length > 0 && (
+          <section class="case__section">
+            <h2>Screenshots</h2>
+            <ul class="gallery" role="list">
+              {project.media.map((m) => (
+                <li>
+                  <button
+                    type="button"
+                    class="gallery__item"
+                    data-lightbox-src={mediaSrc(m.src)}
+                    data-lightbox-alt={m.alt}
+                  >
+                    <img src={mediaSrc(m.src)} alt={m.alt} loading="lazy" decoding="async" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </Container>
+
+    <dialog class="lightbox" data-lightbox aria-label="Image preview">
+      <form method="dialog" class="lightbox__close-form">
+        <button class="lightbox__close" aria-label="Close preview">✕</button>
+      </form>
+      <img class="lightbox__image" data-lightbox-image src="" alt="" />
+    </dialog>
+  </main>
+
+  <script>
+    import "../../scripts/lightbox.ts";
+  </script>
+</BaseLayout>
+
+<style>
+  .case {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding-block: var(--space-xl);
+  }
+
+  .case__back a {
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+  }
+
+  .case__badge {
+    align-self: flex-start;
+    padding: var(--space-3xs) var(--space-xs);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-on-accent);
+    border-radius: var(--radius-pill);
+    background-color: var(--category-web);
+  }
+
+  .case__badge[data-category="game"] {
+    background-color: var(--category-game);
+  }
+
+  .case__badge[data-category="software"] {
+    background-color: var(--category-software);
+  }
+
+  .case__flag {
+    padding: var(--space-2xs) var(--space-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-default);
+    background-color: var(--surface-sunken);
+    border-inline-start: var(--border-thick) solid var(--accent);
+    border-radius: var(--radius-sm);
+  }
+
+  .case__summary {
+    font-size: var(--font-size-md);
+    color: var(--text-muted);
+  }
+
+  .case__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    padding-block: var(--space-sm);
+  }
+
+  .case__meta dt {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--space-3xs);
+    color: var(--text-muted);
+  }
+
+  .case__meta dd {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-default);
+  }
+
+  .case__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    padding: 0;
+    list-style: none;
+  }
+
+  .case__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-block-start: var(--space-lg);
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-gallery-min), 1fr));
+    gap: var(--space-sm);
+    padding: 0;
+    list-style: none;
+  }
+
+  .gallery__item {
+    display: block;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    cursor: zoom-in;
+    background-color: var(--surface-sunken);
+    border: var(--border-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .gallery__item img {
+    width: 100%;
+    aspect-ratio: var(--aspect-card-media);
+    object-fit: cover;
+  }
+
+  .lightbox {
+    width: min(92vw, var(--layout-max));
+    padding: var(--space-xs);
+    background-color: var(--surface-raised);
+    border: var(--border-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+  }
+
+  .lightbox::backdrop {
+    background-color: var(--scrim);
+  }
+
+  .lightbox__close-form {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .lightbox__close {
+    padding: var(--space-3xs) var(--space-xs);
+    color: var(--text-default);
+    cursor: pointer;
+    background-color: transparent;
+    border: var(--border-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+</style>

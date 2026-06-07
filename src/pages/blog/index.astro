@@ -1,0 +1,124 @@
+---
+// /blog — post index (§3). Draft posts are excluded at the data layer (§6.2).
+// Pagination + tag/category filters arrive with real content in Sprint 4.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/Container.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import { getPosts } from "../../lib/content";
+import { withBase } from "../../lib/site";
+
+const posts = getPosts();
+const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+---
+
+<BaseLayout
+  title="Blog"
+  description="Notes on building websites, games, and software — process, engineering, and design."
+  path="blog"
+>
+  <main id="main">
+    <PageHeader
+      eyebrow="Writing"
+      title="Blog"
+      lede="Build logs and notes on engineering, design, and shipping. Posts are composed from block primitives once the content pipeline lands."
+    />
+    <Container as="section">
+      {
+        posts.length > 0 ? (
+          <ul class="post-list" role="list">
+            {posts.map((post) => (
+              <li class="post-list__item">
+                {post.cover && (
+                  <a class="post-list__media" href={withBase(`blog/${post.slug}`)} tabindex="-1" aria-hidden="true">
+                    <img src={withBase(post.cover.src)} alt={post.cover.alt} loading="lazy" decoding="async" />
+                  </a>
+                )}
+                <div class="post-list__body">
+                  <p class="post-list__meta">
+                    <time datetime={post.date}>{fmtDate(post.date)}</time> · {post.category}
+                  </p>
+                  <h2 class="post-list__title">
+                    <a href={withBase(`blog/${post.slug}`)}>{post.title}</a>
+                  </h2>
+                  <p class="post-list__excerpt">{post.excerpt}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="post-empty">Posts appear here once published.</p>
+        )
+      }
+    </Container>
+  </main>
+</BaseLayout>
+
+<style>
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .post-list__item {
+    display: grid;
+    grid-template-columns: minmax(var(--grid-gallery-min), 14rem) 1fr;
+    gap: var(--space-md);
+    align-items: start;
+    padding-block-end: var(--space-lg);
+    border-block-end: var(--border-hairline) solid var(--border-subtle);
+  }
+
+  .post-list__media {
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+  }
+
+  .post-list__media img {
+    width: 100%;
+    aspect-ratio: var(--aspect-card-media);
+    object-fit: cover;
+  }
+
+  .post-list__meta {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+  }
+
+  .post-list__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .post-list__title a {
+    color: var(--text-strong);
+    text-decoration: none;
+  }
+
+  .post-list__title a:hover {
+    color: var(--accent);
+  }
+
+  .post-list__excerpt {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+  }
+
+  .post-empty {
+    color: var(--text-muted);
+  }
+
+  @media (width <= 40rem) {
+    .post-list__item {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

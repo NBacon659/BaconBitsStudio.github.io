@@ -1,0 +1,42 @@
+---
+// PageHeader.astro — the title block for interior pages (§5 SRP). Renders an
+// eyebrow + h1 + lede consistently so every route shares one masthead pattern.
+import Container from "./Container.astro";
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+}
+const { eyebrow, title, lede } = Astro.props;
+---
+
+<Container as="header" class="page-header">
+  {eyebrow && <span class="page-header__eyebrow">{eyebrow}</span>}
+  <h1 class="page-header__title">{title}</h1>
+  {lede && <p class="page-header__lede">{lede}</p>}
+</Container>
+
+<style>
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding-block: var(--space-2xl) var(--space-lg);
+  }
+
+  .page-header__eyebrow {
+    align-self: flex-start;
+    padding: var(--space-3xs) var(--space-xs);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-on-accent);
+    background-color: var(--accent-strong);
+    border-radius: var(--radius-pill);
+  }
+
+  .page-header__lede {
+    max-width: var(--measure-prose);
+    font-size: var(--font-size-md);
+    color: var(--text-muted);
+  }
+</style>

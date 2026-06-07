@@ -1,0 +1,73 @@
+---
+// EmbedFrame.astro — sandboxed iframe slot for game/WebGL embeds (§3, §14a).
+// Security baked in now: sandbox allowlist + referrerpolicy; graceful <noscript>
+// / no-embed fallback link (§11 resilience). Full styling polish is Sprint 7.
+interface Props {
+  src?: string;
+  title: string;
+  fallbackHref?: string;
+  fallbackLabel?: string;
+}
+const {
+  src,
+  title,
+  fallbackHref,
+  fallbackLabel = "Open the build in a new tab",
+} = Astro.props;
+---
+
+<div class="embed-frame">
+  {
+    src ? (
+      <iframe
+        class="embed-frame__iframe"
+        src={src}
+        title={title}
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        referrerpolicy="no-referrer"
+        allowfullscreen
+      />
+    ) : (
+      <p class="embed-frame__fallback">
+        Embed slot — a playable build is wired in here once the project ships.
+      </p>
+    )
+  }
+  {
+    fallbackHref && (
+      <p class="embed-frame__fallback">
+        Trouble loading?{" "}
+        <a href={fallbackHref} target="_blank" rel="noopener noreferrer">
+          {fallbackLabel}
+        </a>
+        .
+      </p>
+    )
+  }
+</div>
+
+<style>
+  .embed-frame {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .embed-frame__iframe {
+    width: 100%;
+    aspect-ratio: var(--aspect-card-media);
+    background-color: var(--surface-sunken);
+    border: var(--border-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .embed-frame__fallback {
+    padding: var(--space-md);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    background-color: var(--surface-sunken);
+    border: var(--border-hairline) dashed var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+</style>

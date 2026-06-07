@@ -1,0 +1,80 @@
+---
+// /about — bio + resume link (§3). Resume PDF is owner-provided content (build
+// standard: never fabricate). Until Nick supplies it the link shows a clearly
+// labeled pending state; drop resume.pdf in /public and flip RESUME_AVAILABLE.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/Container.astro";
+import PageHeader from "../components/PageHeader.astro";
+import Button from "../components/Button.astro";
+import { site, withBase } from "../lib/site";
+
+// Set to true once /public/resume.pdf exists (Nick to provide — §3, decision J).
+const RESUME_AVAILABLE = false;
+const resumeHref = `${import.meta.env.BASE_URL}/resume.pdf`.replace(/\/{2,}/g, "/");
+---
+
+<BaseLayout
+  title="About"
+  description={`About ${site.author} — a multidisciplinary developer building websites, WebGL games, and software.`}
+  path="about"
+>
+  <main id="main">
+    <PageHeader
+      eyebrow="About"
+      title={`Hi, I'm ${site.author}`}
+      lede="A multidisciplinary builder working across web, games, and software."
+    />
+    <Container as="section" class="about">
+      <div class="about__prose">
+        <p>
+          Placeholder bio. {site.author} builds production websites, WebGL games,
+          and desktop software — and is building this very site in the open, one
+          deployable increment at a time. Replace this section with a real bio
+          before launch.
+        </p>
+        <p>
+          The site itself is part of the portfolio: a static Astro front on a
+          token-driven design system, a self-hosted CMS, and a no-magic-numbers,
+          separation-of-concerns engineering standard enforced in CI.
+        </p>
+      </div>
+      <div class="about__resume">
+        {
+          RESUME_AVAILABLE ? (
+            <Button href={resumeHref} variant="primary">Download résumé (PDF)</Button>
+          ) : (
+            <p class="about__resume-pending">Résumé (PDF) — coming soon.</p>
+          )
+        }
+        <Button href={withBase("contact")} variant="ghost">Get in touch</Button>
+      </div>
+    </Container>
+  </main>
+</BaseLayout>
+
+<style>
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding-block-end: var(--space-2xl);
+  }
+
+  .about__prose {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .about__resume {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+  }
+
+  .about__resume-pending {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+  }
+</style>

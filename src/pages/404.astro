@@ -1,0 +1,60 @@
+---
+// Custom 404 (§3, §11 resilience). GitHub Pages serves /404.html automatically
+// for unknown paths. Token-styled, with routes back into the site.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/Container.astro";
+import Button from "../components/Button.astro";
+import { primaryNav, withBase } from "../lib/site";
+---
+
+<BaseLayout
+  title="Page not found"
+  description="The page you were looking for doesn't exist."
+  path="404"
+>
+  <main id="main">
+    <Container as="section" class="notfound">
+      <span class="notfound__code">404</span>
+      <h1 class="notfound__title">Page not found</h1>
+      <p class="notfound__lede">
+        That page doesn't exist or has moved. Try one of these instead:
+      </p>
+      <div class="notfound__actions">
+        <Button href={withBase("")} variant="primary">Home</Button>
+        {
+          primaryNav.map((item) => (
+            <Button href={withBase(item.href)} variant="ghost">{item.label}</Button>
+          ))
+        }
+      </div>
+    </Container>
+  </main>
+</BaseLayout>
+
+<style>
+  .notfound {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: flex-start;
+    padding-block: var(--space-2xl);
+  }
+
+  .notfound__code {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--accent);
+  }
+
+  .notfound__lede {
+    color: var(--text-muted);
+  }
+
+  .notfound__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-block-start: var(--space-md);
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+// /contact — conversion page (§3, §1 goal 5). The Cal.com scheduling embed lands
+// in Sprint 8 (service stood up in Sprint 3); for now this is the email + booking
+// CTA placeholder with a graceful, always-working fallback (§11 resilience).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/Container.astro";
+import PageHeader from "../components/PageHeader.astro";
+import Button from "../components/Button.astro";
+import { site } from "../lib/site";
+---
+
+<BaseLayout
+  title="Contact"
+  description={`Get in touch with ${site.author} — book a call or send an email about web, game, or software work.`}
+  path="contact"
+>
+  <main id="main">
+    <PageHeader
+      eyebrow="Contact"
+      title="Let's talk"
+      lede="Booking and consultation scheduling embeds here once Cal.com is wired (Sprint 8). In the meantime, email works great."
+    />
+    <Container as="section" class="contact">
+      <div class="contact__scheduler" data-scheduler-slot>
+        <p class="contact__scheduler-note">
+          Scheduling embed slot — the Interview and Contract-consultation booking
+          flows mount here in Sprint 8. If the embed ever fails to load, the email
+          below is always available.
+        </p>
+      </div>
+      <div class="contact__actions">
+        <Button href={`mailto:${site.email}`} variant="primary">Email {site.email}</Button>
+      </div>
+    </Container>
+  </main>
+</BaseLayout>
+
+<style>
+  .contact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding-block-end: var(--space-2xl);
+  }
+
+  .contact__scheduler {
+    padding: var(--space-lg);
+    background-color: var(--surface-sunken);
+    border: var(--border-hairline) dashed var(--border-subtle);
+    border-radius: var(--radius-lg);
+  }
+
+  .contact__scheduler-note {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+  }
+
+  .contact__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+</style>

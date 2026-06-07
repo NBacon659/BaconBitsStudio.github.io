@@ -1,35 +1,145 @@
 ---
-// Placeholder Home (§ Sprint 1). Intentionally thin — real pages, the design
-// system, and showpiece styling arrive in Sprints 2 and 7. The point of this
-// page is only to prove the walking skeleton deploys and is token-styled.
+// Home (/) — launch-credible landing (§3). Hero + featured work + CTA. Showpiece
+// motion/polish is Sprint 7; this is the clean professional baseline.
 import BaseLayout from "../layouts/BaseLayout.astro";
-import "../styles/home.css";
+import Container from "../components/Container.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import Button from "../components/Button.astro";
+import { site, socialLinks, withBase, absoluteUrl } from "../lib/site";
+import { getFeaturedProjects } from "../lib/content";
 
-const title = "Bacon Bits Studio — Portfolio";
-const description =
-  "Portfolio of Nick: websites, WebGL games, and software. Walking skeleton — full site in progress.";
-// Vector logo served from /public (no optimization needed for SVG); base-aware URL (§5.1).
-const logoSrc = `${import.meta.env.BASE_URL}baconbitsstudio.svg`.replace(/\/\//g, "/");
+const featured = getFeaturedProjects();
+const base = import.meta.env.BASE_URL;
+const logoSrc = `${base}/baconbitsstudio.svg`.replace(/\/{2,}/g, "/");
+
+const personLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.author,
+  url: absoluteUrl(""),
+  jobTitle: "Software, web, and game developer",
+  email: `mailto:${site.email}`,
+  sameAs: socialLinks
+    .filter((s) => s.href.startsWith("http"))
+    .map((s) => s.href),
+};
+const websiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: site.name,
+  url: absoluteUrl(""),
+  description: site.description,
+};
 ---
 
-<BaseLayout title={title} description={description}>
-  <main class="site-main" id="main">
-    <section class="hero">
-      <img class="hero__logo" src={logoSrc} alt="Bacon Bits Studio logo" />
-      <span class="hero__eyebrow">Walking skeleton · live on day one</span>
-      <h1 class="hero__title">Bacon Bits Studio</h1>
-      <p class="hero__lede">
-        A portfolio of websites, WebGL games, and software — built in the open,
-        one deployable increment at a time.
-      </p>
-      <div class="status-note">
-        <strong>Sprint 1 placeholder.</strong> This thin, auto-deploying page exists
-        to validate the token foundation and the build → GitHub Pages pipeline. The
-        full design system, routes, and content land in later sprints.
+<BaseLayout
+  title={site.name}
+  description={site.description}
+  path=""
+  jsonLd={[personLd, websiteLd]}
+>
+  <main class="home" id="main">
+    <Container as="section" class="hero">
+      <img class="hero__logo" src={logoSrc} alt={`${site.name} logo`} width="176" height="176" />
+      <span class="hero__eyebrow">Portfolio · websites, games & software</span>
+      <h1 class="hero__title">{site.name}</h1>
+      <p class="hero__lede">{site.tagline} Case studies, live demos, and a build-in-the-open blog.</p>
+      <div class="hero__actions">
+        <Button href={withBase("work")} variant="primary">View work</Button>
+        <Button href={withBase("contact")} variant="ghost">Book a call</Button>
       </div>
-    </section>
+    </Container>
+
+    <Container as="section" class="featured">
+      <div class="featured__head">
+        <h2 class="featured__title">Featured work</h2>
+        <a class="featured__all" href={withBase("work")}>All projects →</a>
+      </div>
+      {
+        featured.length > 0 ? (
+          <ul class="card-grid" role="list">
+            {featured.map((project) => (
+              <li>
+                <ProjectCard project={project} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="featured__empty">Featured projects appear here once published.</p>
+        )
+      }
+    </Container>
   </main>
-  <footer class="site-footer">
-    <p>© Bacon Bits Studio — placeholder content, sample build.</p>
-  </footer>
 </BaseLayout>
+
+<style>
+  .home {
+    flex: 1;
+  }
+
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    align-items: flex-start;
+    padding-block: var(--space-2xl);
+  }
+
+  .hero__logo {
+    inline-size: var(--size-logo);
+    block-size: auto;
+  }
+
+  .hero__eyebrow {
+    padding: var(--space-3xs) var(--space-xs);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-on-accent);
+    background-color: var(--accent-strong);
+    border-radius: var(--radius-pill);
+  }
+
+  .hero__title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .hero__lede {
+    font-size: var(--font-size-md);
+    color: var(--text-muted);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-block-start: var(--space-sm);
+  }
+
+  .featured__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: baseline;
+    justify-content: space-between;
+    margin-block-end: var(--space-lg);
+  }
+
+  .featured__all {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min), 1fr));
+    gap: var(--space-lg);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .featured__empty {
+    color: var(--text-muted);
+  }
+</style>

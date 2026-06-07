@@ -1,0 +1,59 @@
+---
+// Nav.astro — primary navigation list (§5 SRP). Marks the current section via
+// aria-current, derived from the live pathname vs. the configured routes.
+import { primaryNav, withBase } from "../lib/site";
+
+const current = Astro.url.pathname;
+function isCurrent(href: string): boolean {
+  const target = withBase(href);
+  // Section match: highlight /work for /work and /work/<slug>.
+  return current === target || current.startsWith(`${target}/`);
+}
+---
+
+<nav class="nav" aria-label="Primary">
+  <ul class="nav__list" role="list">
+    {
+      primaryNav.map((item) => (
+        <li>
+          <a
+            class="nav__link"
+            href={withBase(item.href)}
+            aria-current={isCurrent(item.href) ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .nav__link {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-default);
+    text-decoration: none;
+  }
+
+  .nav__link:hover {
+    color: var(--accent);
+  }
+
+  .nav__link[aria-current="page"] {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: var(--space-3xs);
+  }
+</style>

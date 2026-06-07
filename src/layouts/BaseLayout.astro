@@ -1,38 +1,78 @@
 ---
 // BaseLayout.astro — the single page shell (§5 presentation layer, §13).
-// Global styles are imported here so Astro emits them as external scoped CSS,
-// never inline (§5 "no incidental inline CSS/JS").
+// Composes head metadata (Seo), the persistent Header/Footer, and the page
+// slot. Global token + base styles are imported here so Astro emits them as
+// external CSS, never inline (§5 "no incidental inline CSS/JS").
 import "../styles/tokens.css";
 import "../styles/base.css";
+import Seo from "../components/Seo.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { site } from "../lib/site";
 
 interface Props {
   title: string;
   description: string;
+  /** Site-relative path of this page (drives canonical/OG). "" for home. */
+  path?: string;
+  image?: string;
+  ogType?: "website" | "article";
+  jsonLd?: readonly unknown[];
 }
 
-const { title, description } = Astro.props;
-const base = import.meta.env.BASE_URL;
-// Base-aware public asset URLs (config-driven, never hardcoded — §5.1).
-const asset = (file: string) => `${base}${file}`.replace(/\/\//g, "/");
-const faviconSvg = asset("baconbitsstudio.svg");
-const faviconIco = asset("favicon.ico");
+const {
+  title,
+  description,
+  path = "",
+  image,
+  ogType,
+  jsonLd,
+} = Astro.props;
+const fullTitle = title === site.name ? title : `${title} — ${site.name}`;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href={faviconSvg} />
-    <link rel="icon" type="image/x-icon" href={faviconIco} />
-    <meta name="generator" content={Astro.generator} />
+    <Seo
+      title={fullTitle}
+      description={description}
+      path={path}
+      image={image}
+      ogType={ogType}
+      jsonLd={jsonLd}
+    />
+    {/* No-FOUC theme bootstrap: must run before paint, so it is the one
+       sanctioned is:inline script (documented §5 exception, mirrors the
+       reduced-motion exception in base.css). No behavior beyond the attribute. */}
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem("bbs-theme");
+          if (t === "light" || t === "dark") {
+            document.documentElement.setAttribute("data-theme", t);
+          }
+        } catch (e) {
+          /* storage unavailable — fall back to the CSS prefers-color-scheme default */
+        }
+      })();
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="page-shell">
+      <Header />
       <slot />
+      <Footer />
     </div>
   </body>
 </html>
+
+<style>
+  .page-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+</style>

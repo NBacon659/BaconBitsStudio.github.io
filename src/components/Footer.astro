@@ -1,0 +1,100 @@
+---
+// Footer.astro — site footer (§5 SRP): brand line, social links, copyright.
+import { site, socialLinks, primaryNav, withBase } from "../lib/site";
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__brand">
+      <p class="site-footer__name">{site.name}</p>
+      <p class="site-footer__tagline">{site.tagline}</p>
+    </div>
+    <nav class="site-footer__nav" aria-label="Footer">
+      <ul class="site-footer__list" role="list">
+        {
+          primaryNav.map((item) => (
+            <li>
+              <a class="site-footer__link" href={withBase(item.href)}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <ul class="site-footer__list site-footer__list--social" role="list">
+      {
+        socialLinks.map((s) => (
+          <li>
+            <a class="site-footer__link" href={s.href} rel="me noopener">
+              {s.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  <p class="site-footer__legal">
+    © {year} {site.name}. Placeholder content — sample build.
+  </p>
+</footer>
+
+<style>
+  .site-footer {
+    margin-block-start: var(--space-2xl);
+    background-color: var(--surface-sunken);
+    border-block-start: var(--border-hairline) solid var(--border-subtle);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    justify-content: space-between;
+    width: min(100%, var(--layout-max));
+    padding-block: var(--space-xl);
+    padding-inline: var(--layout-gutter);
+    margin-inline: auto;
+  }
+
+  .site-footer__name {
+    font-family: var(--font-family-display);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-strong);
+  }
+
+  .site-footer__tagline {
+    max-width: var(--measure-prose);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+  }
+
+  .site-footer__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .site-footer__link {
+    font-size: var(--font-size-sm);
+    color: var(--text-default);
+    text-decoration: none;
+  }
+
+  .site-footer__link:hover {
+    color: var(--accent);
+  }
+
+  .site-footer__legal {
+    width: min(100%, var(--layout-max));
+    padding-block-end: var(--space-lg);
+    padding-inline: var(--layout-gutter);
+    margin-inline: auto;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+  }
+</style>

@@ -1,0 +1,141 @@
+---
+// ProjectCard.astro — one project summary card (§5 SRP). Carries data-* hooks
+// the work-filter island reads; presentation is fully tokenized. Category drives
+// an accent via a data attribute (no per-category inline color).
+import type { Project } from "../lib/content";
+import { CATEGORY_LABELS } from "../lib/content";
+import { withBase } from "../lib/site";
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+const href = withBase(`work/${project.slug}`);
+const base = import.meta.env.BASE_URL;
+const cover = project.media[0];
+const coverSrc = cover
+  ? `${base}/${cover.src}`.replace(/\/{2,}/g, "/")
+  : undefined;
+---
+
+<article class="project-card" data-work-card data-category={project.category}>
+  {
+    coverSrc && (
+      <a class="project-card__media" href={href} tabindex="-1" aria-hidden="true">
+        <img src={coverSrc} alt={cover!.alt} loading="lazy" decoding="async" />
+      </a>
+    )
+  }
+  <div class="project-card__body">
+    <span class="project-card__badge" data-category={project.category}>
+      {CATEGORY_LABELS[project.category]}
+    </span>
+    <h3 class="project-card__title">
+      <a href={href}>{project.title}</a>
+    </h3>
+    <p class="project-card__summary">{project.summary}</p>
+    {
+      project.tech.length > 0 && (
+        <ul class="project-card__tech" role="list">
+          {project.tech.map((t) => (
+            <li class="project-card__tech-item">{t}</li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--surface-raised);
+    border: var(--border-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--duration-base) var(--ease-standard),
+      transform var(--duration-base) var(--ease-standard);
+  }
+
+  .project-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(calc(var(--space-3xs) * -1));
+  }
+
+  .project-card__media {
+    display: block;
+    aspect-ratio: var(--aspect-card-media);
+    overflow: hidden;
+    background-color: var(--surface-sunken);
+  }
+
+  .project-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .project-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding: var(--space-md);
+  }
+
+  .project-card__badge {
+    align-self: flex-start;
+    padding: var(--space-3xs) var(--space-xs);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-on-accent);
+    border-radius: var(--radius-pill);
+    background-color: var(--category-web);
+  }
+
+  .project-card__badge[data-category="game"] {
+    background-color: var(--category-game);
+  }
+
+  .project-card__badge[data-category="software"] {
+    background-color: var(--category-software);
+  }
+
+  .project-card__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .project-card__title a {
+    color: var(--text-strong);
+    text-decoration: none;
+  }
+
+  .project-card__title a:hover {
+    color: var(--accent);
+  }
+
+  .project-card__summary {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+  }
+
+  .project-card__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+    padding: 0;
+    margin-block-start: auto;
+    list-style: none;
+  }
+
+  .project-card__tech-item {
+    padding: var(--space-3xs) var(--space-2xs);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    color: var(--text-default);
+    background-color: var(--surface-sunken);
+    border-radius: var(--radius-sm);
+  }
+</style>

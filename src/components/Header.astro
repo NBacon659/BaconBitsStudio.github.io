@@ -1,0 +1,73 @@
+---
+// Header.astro — persistent site header (§5 SRP, §13): brand mark + primary nav
+// + theme toggle + persistent "book a call" CTA placeholder (Cal.com embed wired
+// in Sprint 8). Composes smaller single-job components; owns only layout.
+import { site, withBase } from "../lib/site";
+import Nav from "./Nav.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import Button from "./Button.astro";
+
+const base = import.meta.env.BASE_URL;
+const logoSrc = `${base}/baconbitsstudio.svg`.replace(/\/{2,}/g, "/");
+const homeHref = withBase("");
+const contactHref = withBase("contact");
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-header__brand" href={homeHref}>
+      <img class="site-header__mark" src={logoSrc} alt={`${site.name} home`} width="44" height="44" />
+      <span class="site-header__name">{site.name}</span>
+    </a>
+    <div class="site-header__actions">
+      <Nav />
+      <ThemeToggle />
+      <Button href={contactHref} variant="primary" class="site-header__cta">Book a call</Button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-nav);
+    background-color: var(--surface-base);
+    border-block-end: var(--border-hairline) solid var(--border-subtle);
+  }
+
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+    width: min(100%, var(--layout-max));
+    padding-block: var(--space-sm);
+    padding-inline: var(--layout-gutter);
+    margin-inline: auto;
+  }
+
+  .site-header__brand {
+    display: inline-flex;
+    gap: var(--space-2xs);
+    align-items: center;
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-strong);
+    text-decoration: none;
+  }
+
+  .site-header__mark {
+    inline-size: var(--size-logo-mark);
+    block-size: var(--size-logo-mark);
+  }
+
+  .site-header__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md);
+    align-items: center;
+  }
+</style>

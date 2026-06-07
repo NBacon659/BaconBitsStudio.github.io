@@ -1,0 +1,69 @@
+---
+// ThemeToggle.astro — the toggle control (§4 island). Markup + scoped style
+// here; behavior is the bundled theme.ts module (§5 SoC). Icons use currentColor
+// so they inherit theme text color — no hardcoded fills.
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-pressed="false"
+  aria-label="Switch to dark theme"
+>
+  <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"
+    ></path>
+  </svg>
+  <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V5a1 1 0 0 1 1-1Zm0 14a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4 11h1a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2Zm15 0h1a1 1 0 1 1 0 2h-1a1 1 0 1 1 0-2ZM6 5l.7.7A1 1 0 0 1 5.3 7L4.6 6.3A1 1 0 0 1 6 5Zm12.7 12.7.7.7a1 1 0 0 1-1.4 1.4l-.7-.7a1 1 0 0 1 1.4-1.4ZM6.3 17.3a1 1 0 0 1 0 1.4l-.7.7a1 1 0 0 1-1.4-1.4l.7-.7a1 1 0 0 1 1.4 0ZM19.4 4.6A1 1 0 0 1 19.4 6l-.7.7A1 1 0 0 1 17.3 5.3l.7-.7a1 1 0 0 1 1.4 0Z"
+    ></path>
+  </svg>
+</button>
+
+<script>
+  import "../scripts/theme.ts";
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2xs);
+    color: var(--text-default);
+    cursor: pointer;
+    background-color: transparent;
+    border: var(--border-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    transition: color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .theme-toggle:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .theme-toggle__icon {
+    inline-size: var(--space-md);
+    block-size: var(--space-md);
+  }
+
+  /* Show the moon by default (light theme → offer dark); swap when pressed. */
+  .theme-toggle__icon--sun {
+    display: none;
+  }
+
+  .theme-toggle[aria-pressed="true"] .theme-toggle__icon--moon {
+    display: none;
+  }
+
+  .theme-toggle[aria-pressed="true"] .theme-toggle__icon--sun {
+    display: block;
+  }
+</style>

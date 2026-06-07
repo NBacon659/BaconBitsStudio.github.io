@@ -1,0 +1,105 @@
+---
+// /work — project index, filterable by category (§3). Full list renders
+// server-side (works with JS off); work-filter.ts enhances it client-side.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/Container.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { CATEGORY_LABELS } from "../../lib/content";
+import type { ProjectCategory } from "../../lib/content";
+import { getProjects } from "../../lib/content";
+
+const projects = getProjects();
+const categories = Object.keys(CATEGORY_LABELS) as ProjectCategory[];
+const filters = [
+  { value: "all", label: "All" },
+  ...categories.map((c) => ({ value: c, label: CATEGORY_LABELS[c] })),
+];
+---
+
+<BaseLayout
+  title="Work"
+  description="Selected projects across web, games, and software — case studies, live demos, and downloads."
+  path="work"
+>
+  <main id="main">
+    <PageHeader
+      eyebrow="Portfolio"
+      title="Work"
+      lede="Projects across web, games, and software. Filter by category; each opens a case study with live links, embeds, or downloads."
+    />
+    <Container as="section">
+      <div class="work-filter" data-work-filter role="group" aria-label="Filter projects by category">
+        {
+          filters.map((f) => (
+            <button type="button" class="work-filter__button" data-filter={f.value} aria-pressed={f.value === "all" ? "true" : "false"}>
+              {f.label}
+            </button>
+          ))
+        }
+      </div>
+      <ul class="card-grid" role="list">
+        {
+          projects.map((project) => (
+            <li>
+              <ProjectCard project={project} />
+            </li>
+          ))
+        }
+      </ul>
+      <p class="work-empty" data-work-empty hidden>No projects in this category yet.</p>
+    </Container>
+  </main>
+
+  <script>
+    import "../../scripts/work-filter.ts";
+  </script>
+</BaseLayout>
+
+<style>
+  .work-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin-block-end: var(--space-lg);
+  }
+
+  .work-filter__button {
+    padding: var(--space-2xs) var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-default);
+    cursor: pointer;
+    background-color: var(--surface-raised);
+    border: var(--border-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    transition: color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard),
+      background-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .work-filter__button:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .work-filter__button.is-active {
+    color: var(--text-on-accent);
+    background-color: var(--accent-strong);
+    border-color: var(--accent-strong);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min), 1fr));
+    gap: var(--space-lg);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .work-empty {
+    margin-block-start: var(--space-lg);
+    color: var(--text-muted);
+  }
+</style>

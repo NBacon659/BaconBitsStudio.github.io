@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Source for og-default.png (the file social scrapers actually fetch).
+       Regenerate the PNG from this with sharp/ImageMagick if the brand changes. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d1014"/>
+      <stop offset="1" stop-color="#14181c"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#17a2a2"/>
+      <stop offset="1" stop-color="#38b6ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1200" height="12" fill="url(#accent)"/>
+  <g font-family="'Space Grotesk','Segoe UI',system-ui,sans-serif">
+    <text x="96" y="250" font-size="92" font-weight="700" fill="#ffffff">Bacon Bits Studio</text>
+    <text x="100" y="320" font-size="40" font-weight="500" fill="#5fd0d0">Websites &#183; WebGL games &#183; Software</text>
+    <text x="100" y="392" font-size="32" font-weight="400" fill="#dde5ec">Built in the open, one deployable increment at a time.</text>
+  </g>
+  <rect x="96" y="470" width="320" height="8" rx="4" fill="url(#accent)"/>
+  <text x="96" y="540" font-family="ui-monospace,'Cascadia Code',monospace" font-size="28" fill="#8a97a3">baconbitsstudio.com</text>
+</svg>
