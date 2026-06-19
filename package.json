@@ -30,6 +30,6 @@
     "stylelint": "16.24.0",
     "stylelint-config-standard": "39.0.1",
     "stylelint-declaration-strict-value": "1.10.11",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   }
 }
